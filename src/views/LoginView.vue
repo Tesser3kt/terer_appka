@@ -1,4 +1,26 @@
-<script setup></script>
+<script setup>
+import { ref, defineModel } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUsersStore } from '@/stores/users'
+
+const userName = defineModel('userName')
+const password = defineModel('password')
+const usersStore = useUsersStore()
+const router = useRouter()
+const showErrorMessage = ref(false)
+const errorMessage = ref('')
+
+const handleSubmit = (e) => {
+  e.preventDefault()
+  usersStore.login(userName.value, password.value)
+  if (usersStore.isLoggedIn) {
+    router.push({ name: 'home' })
+  } else {
+    showErrorMessage.value = true
+    errorMessage.value = 'Přihlašovací údaje nejsou správné.'
+  }
+}
+</script>
 <template>
   <main>
     <div class="login-form-wrapper min-vh-100 d-flex justify-content-center align-items-center">
@@ -12,19 +34,19 @@
               <form>
                 <div class="mb-3">
                   <label for="userName" class="form-label">Přihlašovací jméno</label>
-                  <input
-                    type="email"
-                    class="form-control"
-                    id="userName"
-                    aria-describedby="emailHelp"
-                  />
+                  <input v-model="userName" type="text" class="form-control" id="userName" />
                 </div>
                 <div class="mb-3">
                   <label for="password" class="form-label">Heslo</label>
-                  <input type="password" class="form-control" id="password" />
+                  <input v-model="password" type="password" class="form-control" id="password" />
                 </div>
-                <button type="submit" class="btn btn-primary">Přihlásit</button>
+                <button @click="handleSubmit" type="submit" class="btn btn-primary">
+                  Přihlásit
+                </button>
               </form>
+              <div v-show="showErrorMessage" class="alert alert-danger mt-3" role="alert">
+                <span>{{ errorMessage }}</span>
+              </div>
             </div>
           </div>
         </div>
