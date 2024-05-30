@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+@import 'bootstrap/scss/bootstrap';
+
+html,
+body {
+  font-family: 'Source Sans 3', sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Libre Baskerville', serif;
+}
+
+.login-form-wrapper {
+  max-width: 300px;
+  margin: 0 auto;
+  @include media-breakpoint-up(md) {
+    max-width: 400px;
+  }
+}
