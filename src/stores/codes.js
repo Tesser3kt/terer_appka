@@ -28,6 +28,12 @@ export const useCodesStore = defineStore('codes', {
     deactivateCode(id) {
       const code = this.codes.find((code) => code.id === id)
       code.active = false
+    },
+    removeCode(id) {
+      this.codes = this.codes.filter((code) => code.id !== id)
+    },
+    printCode(id) {
+      // TODO
     }
   }
 })
