@@ -13,14 +13,29 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: () => import('../views/LoginView.vue')
+    },
+    {
+      path: '/qr/show/:number',
+      name: 'qr-show',
+      component: () => import('../views/QrShowView.vue')
+    },
+    {
+      path: '/qr/activate/:number',
+      name: 'qr-activate',
+      component: () => import('../views/QrActivateView.vue')
     }
   ]
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const usersStore = useUsersStore()
   if (to.name !== 'login' && !usersStore.isLoggedIn) {
-    next({ name: 'login' })
+    await usersStore.getUserFromCookie()
+    if (!usersStore.isLoggedIn) {
+      next({ name: 'login' })
+    } else {
+      next()
+    }
   } else {
     next()
   }

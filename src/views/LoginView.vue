@@ -10,9 +10,9 @@ const router = useRouter()
 const showErrorMessage = ref(false)
 const errorMessage = ref('')
 
-const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault()
-  usersStore.login(userName.value, password.value)
+  await usersStore.login(userName.value, password.value)
   if (usersStore.isLoggedIn) {
     router.push({ name: 'home' })
   } else {

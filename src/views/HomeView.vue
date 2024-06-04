@@ -1,9 +1,12 @@
 <script setup>
-import { defineModel, computed } from 'vue'
+import { defineModel, computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCodesStore } from '@/stores/codes'
 
 const searchInput = defineModel('searchInput')
+const genNumber = defineModel('genNumber')
+const printNumber = defineModel('printNumber')
+
 const codesStore = useCodesStore()
 const { codes } = storeToRefs(codesStore)
 const filteredCodes = computed(() => {
@@ -13,18 +16,22 @@ const filteredCodes = computed(() => {
   return codes.value.filter((code) => code.number.startsWith(searchInput.value))
 })
 
-const onActivateClick = (id) => {
-  codesStore.activateCode(id)
+const onActivateClick = async (id) => {
+  await codesStore.activateCode(id)
 }
-const onDeactivateClick = (id) => {
-  codesStore.deactivateCode(id)
+const onDeactivateClick = async (id) => {
+  await codesStore.deactivateCode(id)
 }
-const onRemoveClick = (id) => {
-  codesStore.removeCode(id)
+const onRemoveClick = async (id) => {
+  await codesStore.removeCode(id)
 }
-const onPrintClick = (id) => {
-  codesStore.printCode(id)
+const onGenerateClick = async () => {
+  await codesStore.generateCodes(genNumber.value)
 }
+
+onMounted(async () => {
+  await codesStore.fetchCodes()
+})
 </script>
 
 <template>
@@ -34,8 +41,8 @@ const onPrintClick = (id) => {
         <div class="row">
           <h1 class="text-center text-primary-emphasis">Kódy</h1>
         </div>
-        <div class="row mt-3 justify-content-center">
-          <div class="col-12 col-sm-8 col-md-6">
+        <div class="row mt-3 justify-content-center gy-3">
+          <div class="col-12 col-sm-10 col-md-6">
             <input
               v-model="searchInput"
               class="form-control"
@@ -43,6 +50,32 @@ const onPrintClick = (id) => {
               id="codesDataList"
               placeholder="Zadejte kód"
             />
+          </div>
+          <div class="col-8 col-sm-6 col-md-4">
+            <input
+              class="form-control"
+              v-model="genNumber"
+              id="genNumber"
+              type="number"
+              placeholder="Počet kódů k vytvoření"
+            />
+          </div>
+          <div class="col-4 col-sm-4 col-md-2">
+            <button class="btn btn-primary" @click="onGenerateClick">Generovat</button>
+          </div>
+        </div>
+        <div class="row mt-3 justify-content-center justify-content-md-end">
+          <div class="col-8 col-sm-6 col-md-4">
+            <input
+              class="form-control"
+              v-model="printNumber"
+              id="printNumber"
+              type="number"
+              placeholder="Počet kódů k tisku"
+            />
+          </div>
+          <div class="col-4 col-sm-4 col-md-2">
+            <button class="btn btn-primary" @click="onGenerateClick">Tisknout</button>
           </div>
         </div>
         <datalist id="datalistOptions">
@@ -129,25 +162,27 @@ const onPrintClick = (id) => {
                       />
                     </svg>
                   </button>
-                  <button
-                    type="button"
+                  <a
+                    :href="`/qr/show/${code.number}`"
                     class="card-button btn btn-primary ms-2 rounded-circle"
-                    @click="() => onPrintClick(code.id)"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
+                      width="18"
+                      height="18"
                       fill="currentColor"
-                      class="bi bi-printer"
+                      class="bi bi-qr-code"
                       viewBox="0 0 16 16"
                     >
-                      <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1" />
+                      <path d="M2 2h2v2H2z" />
+                      <path d="M6 0v6H0V0zM5 1H1v4h4zM4 12H2v2h2z" />
+                      <path d="M6 10v6H0v-6zm-5 1v4h4v-4zm11-9h2v2h-2z" />
                       <path
-                        d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1"
+                        d="M10 0v6h6V0zm5 1v4h-4V1zM8 1V0h1v2H8v2H7V1zm0 5V4h1v2zM6 8V7h1V6h1v2h1V7h5v1h-4v1H7V8zm0 0v1H2V8H1v1H0V7h3v1zm10 1h-1V7h1zm-1 0h-1v2h2v-1h-1zm-4 0h2v1h-1v1h-1zm2 3v-1h-1v1h-1v1H9v1h3v-2zm0 0h3v1h-2v1h-1zm-4-1v1h1v-2H7v1z"
                       />
+                      <path d="M7 12h1v3h4v1H7zm9 2v2h-3v-1h2v-1z" />
                     </svg>
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>
