@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { doc, setDoc, addDoc, deleteDoc, updateDoc, collection, getDocs } from 'firebase/firestore'
+import { doc, addDoc, deleteDoc, updateDoc, collection, getDocs } from 'firebase/firestore'
 import { db } from '@/firebase'
 
 export const useCodesStore = defineStore('codes', {
@@ -23,8 +23,11 @@ export const useCodesStore = defineStore('codes', {
     },
     async activateCode(id) {
       const code = this.codes.find((code) => code.id === id)
-      if (!code || code.active) {
-        return
+      if (!code) {
+        throw new Error('Kód nebyl nalezen.')
+      }
+      if (code.active) {
+        throw new Error('Kód je již aktivní.')
       }
       code.active = true
 
@@ -33,8 +36,11 @@ export const useCodesStore = defineStore('codes', {
     },
     async deactivateCode(id) {
       const code = this.codes.find((code) => code.id === id)
-      if (!code || !code.active) {
-        return
+      if (!code) {
+        throw new Error('Kód nebyl nalezen.')
+      }
+      if (!code.active) {
+        throw new Error('Kód ještě není aktivní.')
       }
       code.active = false
 
@@ -50,6 +56,15 @@ export const useCodesStore = defineStore('codes', {
 
       const docRef = doc(db, 'codes', id)
       await deleteDoc(docRef)
+    },
+    async getCodeByNumber(number) {
+      const codesRef = collection(db, 'codes')
+      const querySnapshot = await getDocs(codesRef)
+      querySnapshot.forEach((doc) => {
+        if (doc.data().number === number) {
+          return doc.data()
+        }
+      })
     }
   }
 })

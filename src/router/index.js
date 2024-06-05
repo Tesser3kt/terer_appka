@@ -20,9 +20,9 @@ const router = createRouter({
       component: () => import('../views/QrShowView.vue')
     },
     {
-      path: '/qr/activate/:number',
-      name: 'qr-activate',
-      component: () => import('../views/QrActivateView.vue')
+      path: '/qr/:number',
+      name: 'qr',
+      component: () => import('../views/QrView.vue')
     }
   ]
 })

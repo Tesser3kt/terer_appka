@@ -5,7 +5,7 @@ import { useCodesStore } from '@/stores/codes'
 
 const searchInput = defineModel('searchInput')
 const genNumber = defineModel('genNumber')
-const printNumber = defineModel('printNumber')
+// const printNumber = defineModel('printNumber')
 
 const codesStore = useCodesStore()
 const { codes } = storeToRefs(codesStore)
@@ -64,7 +64,7 @@ onMounted(async () => {
             <button class="btn btn-primary" @click="onGenerateClick">Generovat</button>
           </div>
         </div>
-        <div class="row mt-3 justify-content-center justify-content-md-end">
+        <!-- <div class="row mt-3 justify-content-center justify-content-md-end">
           <div class="col-8 col-sm-6 col-md-4">
             <input
               class="form-control"
@@ -77,7 +77,7 @@ onMounted(async () => {
           <div class="col-4 col-sm-4 col-md-2">
             <button class="btn btn-primary" @click="onGenerateClick">Tisknout</button>
           </div>
-        </div>
+        </div> -->
         <datalist id="datalistOptions">
           <option v-for="code in codes" :key="code.id" :value="code.number">
             {{ code.number }}
