@@ -57,12 +57,23 @@ export const useCodesStore = defineStore('codes', {
       const docRef = doc(db, 'codes', id)
       await deleteDoc(docRef)
     },
-    async getCodeByNumber(number) {
+    async activateCodeByNumber(number) {
       const codesRef = collection(db, 'codes')
       const querySnapshot = await getDocs(codesRef)
-      querySnapshot.forEach((doc) => {
-        if (doc.data().number === number) {
-          return doc.data()
+      querySnapshot.forEach(async (document) => {
+        if (document.data().number === number) {
+          const docRef = doc(db, 'codes', document.id)
+          await updateDoc(docRef, { active: true })
+        }
+      })
+    },
+    async deactivateCodeByNumber(number) {
+      const codesRef = collection(db, 'codes')
+      const querySnapshot = await getDocs(codesRef)
+      querySnapshot.forEach(async (document) => {
+        if (document.data().number === number) {
+          const docRef = doc(db, 'codes', document.id)
+          await updateDoc(docRef, { active: false })
         }
       })
     }

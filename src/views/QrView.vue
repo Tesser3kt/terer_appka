@@ -13,9 +13,8 @@ const codeNumber = route.params.number
 const codesStore = useCodesStore()
 
 async function activateCode() {
-  const code = await codesStore.getCodeByNumber(codeNumber)
   try {
-    await codesStore.activateCode(code.id)
+    await codesStore.activateCodeByNumber(codeNumber)
     message.value = 'Kód byl aktivován.'
     error.value = false
   } catch (error) {
@@ -24,9 +23,8 @@ async function activateCode() {
   }
 }
 async function deactivateCode() {
-  const code = await codesStore.getCodeByNumber(codeNumber)
   try {
-    await codesStore.deactivateCode(code.id)
+    await codesStore.deactivateCodeByNumber(codeNumber)
     message.value = 'Kód byl deaktivován.'
     error.value = false
   } catch (error) {
@@ -41,17 +39,17 @@ async function deactivateCode() {
       <h1 class="text-primary-emphasis">Kód {{ codeNumber }}</h1>
       <div class="container mt-3">
         <div class="row justify-content-center">
-          <div class="col-12 col-sm-8 col-md-6 justify-content-center">
+          <div class="col-12 col-sm-8 col-md-6 text-center">
             <button @click="activateCode" class="btn btn-success">Aktivovat</button>
-            <button @click="deactivateCode" class="btn btn-warning">Deaktivovat</button>
+            <button @click="deactivateCode" class="btn btn-warning ms-3">Deaktivovat</button>
           </div>
         </div>
       </div>
-      <div v-if="message">
-        <div v-if="error" class="alert alert-danger" role="alert">
+      <div v-if="message" class="container-xs mt-3">
+        <div v-if="error" class="alert alert-danger m-0" role="alert">
           {{ message }}
         </div>
-        <div v-else class="alert alert-success" role="alert">
+        <div v-else class="alert alert-success m-0" role="alert">
           {{ message }}
         </div>
       </div>
