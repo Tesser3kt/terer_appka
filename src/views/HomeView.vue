@@ -28,9 +28,9 @@ const onRemoveClick = async (id) => {
 const onGenerateClick = async () => {
   await codesStore.generateCodes(genNumber.value)
 }
-const saveCodesToFile = () => {
-  codesStore.saveCodesToFile()
-}
+// const saveCodesToFile = () => {
+//   codesStore.saveCodesToFile()
+// }
 
 onMounted(async () => {
   await codesStore.fetchCodes()

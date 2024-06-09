@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { doc, addDoc, deleteDoc, updateDoc, collection, getDocs } from 'firebase/firestore'
 import { db } from '@/firebase'
-import { saveAs, encodeBase64 } from '@progress/kendo-file-saver'
+import { saveAs } from '@progress/kendo-file-saver'
 
 export const useCodesStore = defineStore('codes', {
   state: () => ({
@@ -57,26 +57,6 @@ export const useCodesStore = defineStore('codes', {
 
       const docRef = doc(db, 'codes', id)
       await deleteDoc(docRef)
-    },
-    async activateCodeByNumber(number) {
-      const codesRef = collection(db, 'codes')
-      const querySnapshot = await getDocs(codesRef)
-      querySnapshot.forEach(async (document) => {
-        if (document.data().number === number) {
-          const docRef = doc(db, 'codes', document.id)
-          await updateDoc(docRef, { active: true })
-        }
-      })
-    },
-    async deactivateCodeByNumber(number) {
-      const codesRef = collection(db, 'codes')
-      const querySnapshot = await getDocs(codesRef)
-      querySnapshot.forEach(async (document) => {
-        if (document.data().number === number) {
-          const docRef = doc(db, 'codes', document.id)
-          await updateDoc(docRef, { active: false })
-        }
-      })
     },
     saveCodesToFile() {
       const codes = this.codes.map((code) => code.number)
