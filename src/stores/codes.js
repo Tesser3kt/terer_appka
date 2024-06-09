@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { doc, addDoc, deleteDoc, updateDoc, collection, getDocs } from 'firebase/firestore'
 import { db } from '@/firebase'
+import { saveAs, encodeBase64 } from '@progress/kendo-file-saver'
 
 export const useCodesStore = defineStore('codes', {
   state: () => ({
@@ -76,6 +77,12 @@ export const useCodesStore = defineStore('codes', {
           await updateDoc(docRef, { active: false })
         }
       })
+    },
+    saveCodesToFile() {
+      const codes = this.codes.map((code) => code.number)
+      const codesString = codes.join('\n')
+      const blob = new Blob([codesString], { type: 'text/plain' })
+      saveAs(blob, 'codes.txt')
     }
   }
 })
