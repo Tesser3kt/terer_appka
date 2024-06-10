@@ -1,7 +1,7 @@
 from PIL import Image
 import segno
 
-BASE_URL = "http://192.168.0.36:4173/qr/"
+BASE_URL = "https://terer-appka.web.app/qr/"
 TICKET_FOLDER = "tickets"
 TICKET_WIDTH = 2000
 TICKET_HEIGHT = 647
@@ -45,7 +45,7 @@ def split_into_A4s():
         codes = f.read().splitlines()
 
     offset_y = 0
-    for i, code in enumerate(codes):
+    for i, code in enumerate(codes):https://terer-appka.web.app/
         ticket = Image.open(f"{TICKET_FOLDER}/{code}.png")
         background.paste(ticket, (0, offset_y))
         offset_y += TICKET_HEIGHT + TICKET_GAP
@@ -70,5 +70,4 @@ if __name__ == "__main__":
         for code in codes:
             create_ticket(code)
             print(f"Ticket {code} created.")
-    # split_into_A4s()
-    ...
+    split_into_A4s()

@@ -4,7 +4,7 @@ import VueQrcode from 'vue-qrcode'
 
 const route = useRoute()
 const number = route.params.number
-const url = `http://localhost:5173/qr/activate/${number}`
+const url = `https://terer-appka.web.app/qr/${number}`
 </script>
 <template>
   <main>

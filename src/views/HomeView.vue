@@ -5,16 +5,25 @@ import { useCodesStore } from '@/stores/codes'
 
 const searchInput = defineModel('searchInput')
 const genNumber = defineModel('genNumber')
-// const printNumber = defineModel('printNumber')
+const showActive = defineModel('showActive')
 
 const codesStore = useCodesStore()
 const { codes } = storeToRefs(codesStore)
+const codesToShow = computed(() => {
+  if (showActive.value) {
+    return codes.value.filter((code) => code.active)
+  }
+  return codes.value
+})
 const filteredCodes = computed(() => {
   if (!searchInput.value) {
-    return codes.value
+    return codesToShow.value
   }
-  return codes.value.filter((code) => code.number.startsWith(searchInput.value))
+  return codesToShow.value.filter((code) => code.number.startsWith(searchInput.value))
 })
+const numberOfActiveCodes = computed(() => codes.value.filter((code) => code.active).length)
+const numberOfInactiveCodes = computed(() => codes.value.filter((code) => !code.active).length)
+const numberOfCodes = computed(() => codes.value.length)
 
 const onActivateClick = async (id) => {
   await codesStore.activateCode(id)
@@ -23,7 +32,8 @@ const onDeactivateClick = async (id) => {
   await codesStore.deactivateCode(id)
 }
 const onRemoveClick = async (id) => {
-  await codesStore.removeCode(id)
+  // await codesStore.removeCode(id)
+  console.log('Removing disabled', id)
 }
 const onGenerateClick = async () => {
   await codesStore.generateCodes(genNumber.value)
@@ -45,7 +55,25 @@ onMounted(async () => {
         <div class="row">
           <h1 class="text-center text-primary-emphasis">Kódy</h1>
         </div>
-        <div class="row mt-3 justify-content-center gy-3">
+        <div class="row mt-3 gy-3 px-3">
+          <div class="container-xl alert alert-light">
+            <div class="row">
+              <div class="col-4 text-center">
+                <p class="fw-semibold mb-0 text-primary">Aktivní</p>
+                <p class="fw-semibold mb-0 fs-5">{{ numberOfActiveCodes }}</p>
+              </div>
+              <div class="col-4 text-center">
+                <p class="fw-semibold mb-0 text-secondary">Neaktivní</p>
+                <p class="fw-semibold fs-5 mb-0">{{ numberOfInactiveCodes }}</p>
+              </div>
+              <div class="col-4 text-center">
+                <p class="fw-semibold mb-0">Celkem</p>
+                <p class="fw-semibold fs-5 mb-0">{{ numberOfCodes }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row gy-3">
           <div class="col-12 col-sm-10 col-md-6">
             <input
               v-model="searchInput"
@@ -67,21 +95,18 @@ onMounted(async () => {
           <div class="col-4 col-sm-4 col-md-2">
             <button class="btn btn-primary" @click="onGenerateClick">Generovat</button>
           </div>
-        </div>
-        <!-- <div class="row mt-3 justify-content-center justify-content-md-end">
           <div class="col-8 col-sm-6 col-md-4">
-            <input
-              class="form-control"
-              v-model="printNumber"
-              id="printNumber"
-              type="number"
-              placeholder="Počet kódů k tisku"
-            />
+            <div class="form-check">
+              <label class="form-check-label" for="flexCheckDefault">Zobrazit pouze aktivní</label>
+              <input
+                v-model="showActive"
+                class="form-check-input"
+                type="checkbox"
+                id="flexCheckDefault"
+              />
+            </div>
           </div>
-          <div class="col-4 col-sm-4 col-md-2">
-            <button class="btn btn-primary" @click="onGenerateClick">Tisknout</button>
-          </div>
-        </div> -->
+        </div>
         <datalist id="datalistOptions">
           <option v-for="code in codes" :key="code.id" :value="code.number">
             {{ code.number }}
@@ -147,8 +172,9 @@ onMounted(async () => {
                   </button>
                   <button
                     type="button"
-                    class="card-button btn btn-danger ms-2 rounded-circle"
+                    class="card-button btn btn-secondary ms-2 rounded-circle"
                     @click="() => onRemoveClick(code.id)"
+                    disabled
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
